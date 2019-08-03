@@ -4,17 +4,14 @@ import * as modals from './modals/modals';
 const cors = require("cors")({origin: true});
 
 //import * as admin from 'firebase-admin';
-
-
-// // Start writing Firebase Functions
-// // https://firebase.google.com/docs/functions/typescript
+// Start writing Firebase Functions
+// https://firebase.google.com/docs/functions/typescript
 //
 
 export const createUser = functions.https.onRequest((request, response)=>{
-
     cors(request, response, (req: any, res: any)=>{
-        if (req.method === 'POST'){
-            let body = req.body;
+        if (request.method === 'POST'){
+            let body = request.body;
             console.log(body);
             let user = {
                 name: body.user.name,
