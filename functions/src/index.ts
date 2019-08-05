@@ -37,10 +37,10 @@ export const createUser = functions.https.onRequest((request, response)=>{
                         console.log("auth user object: "+JSON.stringify(user));
                         //save student object in db
                         lib.createStudentInDb(user).then(()=>{
-                            res.status(200).send("Student Created !");
+                            response.status(200).send("Student Created !");
                         }).catch((err: Error)=>{
                             console.log("Catched Err in Studnet: "+err);
-                            res.status(400).send("Catched Error: "+err.message);
+                            response.status(400).send("Catched Error: "+err.message);
                         });
                     } 
                     else if(body.user.profile === 'teacher'){
@@ -53,9 +53,9 @@ export const createUser = functions.https.onRequest((request, response)=>{
                         }
                         console.log("prepared teacher object: "+user);
                         lib.createTeacherInDb(user).then(()=>{
-                            res.status(200).send("Teacher created !");
+                            response.status(200).send("Teacher created !");
                         }).catch((err)=>{
-                            res.status(400).send("Error adding teacher to db");
+                            response.status(400).send("Error adding teacher to db");
                             console.log("Catched Err: "+err.message);
                         });
                     } else if (body.user.profile === 'librarian'){
@@ -66,24 +66,24 @@ export const createUser = functions.https.onRequest((request, response)=>{
                             email: firebaseUser.email
                         }
                         lib.createLibrarianInDb(user).then(()=>{
-                            res.status(200).send("Librarian Saved !");
+                            response.status(200).send("Librarian Saved !");
                         }).catch((err)=>{
                             console.log("Catched Err: "+err.message);
-                            res.status(400).send("Cannot add librarian in db");
+                            response.status(400).send("Cannot add librarian in db");
                         });
                     } else{
-                        res.status(400).send("Invalid Profile :-/ ");
+                        response.status(400).send("Invalid Profile :-/ ");
                     }
             }, 
             (err: Error)=>{
                 console.log("error while creating user in auth: "+err);
-                res.status(400).send("Error creating User in Auth");
+                response.status(400).send("Error creating User in Auth");
             }).catch((err)=>{
                 console.log("Catched Err: "+JSON.stringify(err));
             })
         } else{
-            res.status(400);
-            res.send("invalid request");
+            response.status(400);
+            response.send("invalid request");
         }
     });
 
@@ -101,9 +101,9 @@ export const deleteUser = functions.https.onRequest((request, response)=>{
             let body = request.body;
             let uid = body.uid;
             lib.deleteUserFromDb(uid).then(()=>{
-                console.log("user deleted frm db: "+uid);
+                console.log("user deleted from db: "+uid);
                 // proceed further
-                lib.createUserinAuth(uid).then(()=>{
+                lib.deleteUserFromAuth(uid).then(()=>{
                     // user removed from auth also
                     console.log("user deleted from auth: "+uid);
                     response.status(200);

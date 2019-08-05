@@ -66,13 +66,13 @@ export function addTestObject(){
 }
 
 export function deleteUserFromAuth(uid:string): Promise<any>{
-    console.log("User Id: "+uid);
+    console.log("[Auth] User Id: "+uid);
     // delete user from auth and db 
-    return admin.auth().auth.deleteUser(uid);
+    return admin.auth().deleteUser(uid);
 }
 
 export function deleteUserFromDb(uid:string):Promise<any>{
-    console.log("UserId: "+uid);
+    console.log("[Db] UserId: "+uid);
     return db.ref("/users/"+uid).remove();
 }
 
