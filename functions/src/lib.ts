@@ -65,5 +65,16 @@ export function addTestObject(){
     return ref.set({name: "Ankur"});
 }
 
+export function deleteUserFromAuth(uid:string): Promise<any>{
+    console.log("User Id: "+uid);
+    // delete user from auth and db 
+    return admin.auth().auth.deleteUser(uid);
+}
+
+export function deleteUserFromDb(uid:string):Promise<any>{
+    console.log("UserId: "+uid);
+    return db.ref("/users/"+uid).remove();
+}
+
 
 

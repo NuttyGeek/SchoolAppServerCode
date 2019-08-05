@@ -1,6 +1,7 @@
 import * as functions from 'firebase-functions';
 import * as lib from './lib';
 import * as modals from './modals/modals';
+
 const cors = require("cors")({origin: true});
 
 //import * as admin from 'firebase-admin';
@@ -87,6 +88,41 @@ export const createUser = functions.https.onRequest((request, response)=>{
     });
 
     
+});
+
+/**
+ * this function deletes the firebase user
+ */
+export const deleteUser = functions.https.onRequest((request, response)=>{
+    cors(request, response, (req: any, res:any)=>{
+        // get the user id to delete the user
+        if(request.method==='POST' && request.body.uid!==null){
+            // get the uid 
+            let body = request.body;
+            let uid = body.uid;
+            lib.deleteUserFromDb(uid).then(()=>{
+                console.log("user deleted frm db: "+uid);
+                // proceed further
+                lib.createUserinAuth(uid).then(()=>{
+                    // user removed from auth also
+                    console.log("user deleted from auth: "+uid);
+                    response.status(200);
+                    response.send("USer deleted !: "+uid);
+                }).catch((err:Error)=>{
+                    response.status(400);
+                    console.log("Error while removing user from auth: "+err.message);
+                    response.send("Error while removing user from auth: "+err.message);
+                })
+            }).catch((err:Error)=>{
+                console.log("error while removing user from db ");
+                response.status(400);
+                response.send("Error while removing user from db: "+err.message);
+            })
+        } else{
+            response.status(400);
+            response.send("Inavlid Request");
+        }
+    })
 });
 
 
